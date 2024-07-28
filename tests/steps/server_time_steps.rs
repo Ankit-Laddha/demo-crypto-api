@@ -1,3 +1,4 @@
+use std::env;
 use cucumber::{given, then, when};
 use reqwest::StatusCode;
 use serde::Deserialize;
@@ -16,8 +17,10 @@ struct ServerTime {
 }
 
 #[given(regex = r#"the Server API endpoint "(.*)""#)]
-async fn given_the_server_api_endpoint(api: &mut CryptoApi, endpoint: String) {
-    api.endpoint = Some(endpoint);
+async fn given_the_server_api_endpoint(api: &mut CryptoApi, path: String) {
+    let base_url = env::var("BASE_URL").expect("BASE_URL not set in .env file");
+    let full_url = format!("{}{}", base_url, path);
+    api.endpoint = Some(full_url);
 }
 
 async fn send_get_request(endpoint: &str) -> Result<(StatusCode, String), reqwest::Error> {

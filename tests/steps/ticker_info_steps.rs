@@ -1,5 +1,4 @@
 use cucumber::{given, then};
-use log::{debug, info};
 use serde::Deserialize;
 use crate::crypto_api::CryptoApi;
 

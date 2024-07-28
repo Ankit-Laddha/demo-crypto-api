@@ -1,15 +1,15 @@
 mod crypto_api;
 mod steps;
 
-use cucumber::{World};
+use cucumber::{Cucumber, World};
 use std::env;
-use env_logger;
+use dotenv::dotenv;
 use crate::crypto_api::CryptoApi;
 
 #[tokio::main]
 async fn main() {
     // Initialize the logger
-    env_logger::init();
+    dotenv().ok();
 
     // Get the tags from the command line arguments
     let args: Vec<String> = env::args().collect();
@@ -33,8 +33,6 @@ async fn main() {
             .filter_run("tests/features", move |_, _, sc| {
                 sc.tags.iter().any(|t| tags.contains(t))
             })
-            //.steps(steps_raj::server_time_steps::steps())
-            //.steps(steps_raj::ticker_info_steps::steps())
             .await;
     }
 }

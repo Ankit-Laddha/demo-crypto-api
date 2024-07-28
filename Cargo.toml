@@ -5,15 +5,13 @@ edition = "2021"
 
 [dev-dependencies]
 cucumber = "0.21.1"
-futures = "0.3"
+dotenv = "0.15"
 reqwest = { version = "0.12.5", features = ["blocking", "json"] }
 tokio = { version = "1.39.2", features = ["full"] }
 serde = { version = "1.0.204", features = ["derive"] }
 serde_json = "1.0.120"
 rayon = "1.10.0"
 regex = "1.10.5"
-env_logger = "0.11.5"
-log = "0.4.14"
 
 [build-dependencies]
 handlebars = "6.0.0"
@@ -22,4 +20,3 @@ handlebars = "6.0.0"
 name = "cucumber_runner" # this should be the same as the filename of your test target
 path = "tests/cucumber_runner.rs"
 harness = false  # allows Cucumber to print output instead of libtest
-
