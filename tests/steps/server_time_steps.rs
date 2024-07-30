@@ -1,6 +1,4 @@
-use std::env;
-use cucumber::{given, then, when};
-use reqwest::StatusCode;
+use cucumber::then;
 use serde::Deserialize;
 use crate::crypto_api::CryptoApi;
 

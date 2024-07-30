@@ -1,20 +1,16 @@
 use crate::crypto_api::CryptoApi;
-use base64::encode as base64_encode;
-use base64::engine::general_purpose::{STANDARD, URL_SAFE_NO_PAD};
-use base64::{decode as base64_decode, Engine};
+use base64::engine::general_purpose::STANDARD;
+use base64:: Engine;
 use cucumber::{given, then, when};
 use hmac::digest::Digest;
 use hmac::{Hmac, KeyInit, Mac};
 use reqwest::{header, StatusCode};
-use serde::Deserialize;
 use sha2::{Sha256, Sha512};
 use std::collections::HashMap;
 use std::env;
 use std::fmt::Write;
 use std::time::{SystemTime, UNIX_EPOCH};
-use tokio;
 
-type HmacSha256 = Hmac<Sha256>;
 type HmacSha512 = Hmac<Sha512>;
 
 #[given(regex = r#"the Server API endpoint "(.*)""#)]

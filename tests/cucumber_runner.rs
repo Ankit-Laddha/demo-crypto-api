@@ -1,7 +1,7 @@
 mod crypto_api;
 mod steps;
 
-use cucumber::{Cucumber, World};
+use cucumber::World;
 use std::env;
 use dotenv::dotenv;
 use crate::crypto_api::CryptoApi;

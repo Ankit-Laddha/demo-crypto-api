@@ -1,6 +1,6 @@
-use cucumber::{given, then};
-use serde::Deserialize;
 use crate::crypto_api::CryptoApi;
+use cucumber::then;
+use serde::Deserialize;
 
 #[derive(Deserialize)]
 struct TickerResponse {
@@ -22,10 +22,20 @@ struct TickerInfo {
 }
 
 #[then(regex = r#"the response should contain "(.*)" trading pair information"#)]
-async fn check_response_for_valid_trading_pair_information(api: &mut CryptoApi, trading_pair: String) {
-    let response_body = api.response_body.as_ref().expect("Response body was not set");
-    let response: TickerResponse = serde_json::from_str(response_body).expect("Failed to parse JSON");
+async fn check_response_for_valid_trading_pair_information(
+    api: &mut CryptoApi,
+    trading_pair: String,
+) {
+    let response_body = api
+        .response_body
+        .as_ref()
+        .expect("Response body was not set");
+    let response: TickerResponse =
+        serde_json::from_str(response_body).expect("Failed to parse JSON");
 
     assert!(response.error.is_empty(), "Response contains errors");
-    assert!(response.result.contains_key(&trading_pair), "Trading pair information missing");
+    assert!(
+        response.result.contains_key(&trading_pair),
+        "Trading pair information missing"
+    );
 }
