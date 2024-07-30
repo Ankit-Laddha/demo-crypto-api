@@ -6,10 +6,10 @@ edition = "2021"
 [dev-dependencies]
 cucumber = "0.21.1"
 dotenv = "0.15"
-reqwest = { version = "0.12.5", features = ["blocking", "json"] }
+reqwest = { version = "0.12.5", features = ["json"] }
 tokio = { version = "1.39.2", features = ["full"] }
 serde = { version = "1.0.204", features = ["derive"] }
-serde_json = "1.0.120"
+serde_json = { version = "1.0.121" }
 rayon = "1.10.0"
 regex = "1.10.5"
 hmac = "0.13.0-pre.4"
