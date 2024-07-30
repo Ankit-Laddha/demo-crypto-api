@@ -1,6 +1,6 @@
 Feature: Crypto API Time Retrieval
 
-  @smoke
+  @time
   Scenario: Successfully fetch server time from Crypto API
     Given the Server API endpoint "/0/public/Time"
     When I send a GET request to the endpoint
