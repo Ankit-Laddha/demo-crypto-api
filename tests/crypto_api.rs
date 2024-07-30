@@ -7,3 +7,4 @@ pub struct CryptoApi {
     pub response_status: Option<StatusCode>,
     pub response_body: Option<String>,
 }
+

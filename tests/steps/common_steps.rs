@@ -20,13 +20,6 @@ async fn given_the_server_api_endpoint(api: &mut CryptoApi, path: String) {
     api.endpoint = Some(full_url);
 }
 
-async fn send_get_request(endpoint: &str) -> Result<(StatusCode, String), reqwest::Error> {
-    let response = reqwest::get(endpoint).await?;
-    let status = response.status();
-    let body = response.text().await?;
-    Ok((status, body))
-}
-
 #[when("I send a GET request to the endpoint")]
 async fn when_i_send_a_get_request(api: &mut CryptoApi) {
     let endpoint = api.endpoint.as_ref().expect("Endpoint was not set");
@@ -47,15 +40,40 @@ async fn then_the_response_status_should_be(api: &mut CryptoApi, expected_status
     );
 }
 
+#[when("a POST request is sent to the endpoint with invalid api_key")]
+async fn post_request_with_invalid_api_key(api: &mut CryptoApi) {
+    send_post_request_with_credentials(
+        api,
+        &"invalid-api-key",
+        &env::var("API_SECRET").expect("API_SECRET not set in .env file"),
+    )
+    .await;
+}
+
+#[when("a POST request is sent to the endpoint with invalid api_secret")]
+async fn post_request_with_invalid_api_secret(api: &mut CryptoApi) {
+    // Use a valid base64-encoded string as the dummy secret
+    send_post_request_with_credentials(
+        api,
+        &env::var("API_KEY").expect("API_KEY not set in .env file"),
+        &"I9dZwIn+oVU8If+E24ZNHbQQqqC/dummy9CHvmPVKgdpFBJ01q6HpDFT20qaTBjDep+5mRYNbgTWfQHR7uCAig==",
+    )
+    .await;
+}
+
 #[when("a POST request is sent to the endpoint with valid credentials")]
 async fn post_request_with_valid_credentials(api: &mut CryptoApi) {
-    let url = api.endpoint.as_ref().expect("Endpoint was not set");
+    send_post_request_with_credentials(
+        api,
+        &env::var("API_KEY").expect("API_KEY not set in .env file"),
+        &env::var("API_SECRET").expect("API_SECRET not set in .env file"),
+    )
+    .await;
+}
 
-    let nonce = SystemTime::now()
-        .duration_since(UNIX_EPOCH)
-        .expect("Time went backwards")
-        .as_millis()
-        .to_string();
+async fn send_post_request_with_credentials(api: &mut CryptoApi, api_key: &str, api_secret: &str) {
+    let url = api.endpoint.as_ref().expect("Endpoint was not set");
+    let nonce = get_nonce();
 
     // Create the required body parameters
     let mut body = HashMap::new();
@@ -65,23 +83,38 @@ async fn post_request_with_valid_credentials(api: &mut CryptoApi) {
     // Create HashMap with references to the `String` values
     let body_refs: HashMap<&str, &String> = body.iter().map(|(k, v)| (*k, v)).collect();
 
-    let signature = generate_kraken_signature("/0/private/OpenOrders", &nonce, &body_refs);
+    let signature =
+        generate_kraken_signature("/0/private/OpenOrders", &nonce, &body_refs, &api_secret);
 
     let post_body = format!("nonce={}&trades=false", nonce);
-    let (status, body) = send_post_request(&url, &signature, &post_body)
+    let (status, body) = send_post_request(&url, &signature, &post_body, api_key)
         .await
         .expect("Failed to send POST request");
-    println!("LOG: {}", body);
     api.response_status = Some(status);
     api.response_body = Some(body);
+}
+
+fn get_nonce() -> String {
+    SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .expect("Time went backwards")
+        .as_millis()
+        .to_string()
+}
+
+async fn send_get_request(endpoint: &str) -> Result<(StatusCode, String), reqwest::Error> {
+    let response = reqwest::get(endpoint).await?;
+    let status = response.status();
+    let body = response.text().await?;
+    Ok((status, body))
 }
 
 async fn send_post_request(
     url: &str,
     signature: &str,
     body: &str,
+    api_key: &str,
 ) -> Result<(StatusCode, String), reqwest::Error> {
-    let api_key = env::var("API_KEY").expect("API_KEY not set in .env file");
     let client = reqwest::Client::new();
     let response = client
         .post(url)
@@ -98,11 +131,17 @@ async fn send_post_request(
     let status = response.status();
     let body = response.text().await?;
     assert!(!body.is_empty(), "Response body should not be empty");
-    println!("Response: {}", body);
+    //println!("status: {}", status);
+    //println!("Response: {}", body);
     Ok((status, body))
 }
 
-fn generate_kraken_signature(uri_path: &str, nonce: &str, data: &HashMap<&str, &String>) -> String {
+fn generate_kraken_signature(
+    uri_path: &str,
+    nonce: &str,
+    data: &HashMap<&str, &String>,
+    secret: &str,
+) -> String {
     // Create post data in the form "key=value&key=value"
     let mut postdata = String::new();
     for (key, value) in data.iter() {
@@ -121,9 +160,8 @@ fn generate_kraken_signature(uri_path: &str, nonce: &str, data: &HashMap<&str, &
     message.extend_from_slice(uri_path.as_bytes());
     message.extend_from_slice(&encoded_hash);
 
-    let api_secret = env::var("API_SECRET").expect("API_SECRET not set in .env file");
     // Decode secret from base64
-    let decoded_secret = STANDARD.decode(api_secret).expect("Invalid API secret");
+    let decoded_secret = STANDARD.decode(secret).expect("Invalid API secret");
 
     // Create HMAC-SHA512
     let mut mac =

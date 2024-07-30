@@ -1,10 +1,12 @@
-mod crypto_api;
-mod steps;
+use std::env;
 
-use crate::crypto_api::CryptoApi;
 use cucumber::World;
 use dotenv::dotenv;
-use std::env;
+
+use crate::crypto_api::CryptoApi;
+
+mod crypto_api;
+mod steps;
 
 #[tokio::main]
 async fn main() {
