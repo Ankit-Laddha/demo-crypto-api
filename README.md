@@ -21,8 +21,8 @@ cd demo-crypto-api
 ```
 
 ### Setting Up Environment Variables
-[IMP] We are dealing with few secrets for this project. So clone the `.env.template` file available in the root of the project and create another `.env` file
-Add the actual values for those variables, they are gitIgnored to be safe.
+`[IMP]` We are dealing with few secrets for this project. So clone the `.env.template` file available in the root of the project and create another `.env` file. 
+Add the actual values for those variables, they are `gitIgnored` to be safe.
 
 
 ## Running Tests
