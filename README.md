@@ -17,7 +17,7 @@ To set up and run this project, you need the following prerequisites installed:
 
 ```sh
 git clone https://github.com/Ankit-Laddha/demo-crypto-api.git
-cd demo-crypto-api.git
+cd demo-crypto-api
 ```
 
 ### Setting Up Environment Variables
