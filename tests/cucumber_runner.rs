@@ -1,10 +1,10 @@
 mod crypto_api;
 mod steps;
 
-use cucumber::World;
-use std::env;
-use dotenv::dotenv;
 use crate::crypto_api::CryptoApi;
+use cucumber::World;
+use dotenv::dotenv;
+use std::env;
 
 #[tokio::main]
 async fn main() {
@@ -13,13 +13,16 @@ async fn main() {
 
     // Get the tags from the command line arguments
     let args: Vec<String> = env::args().collect();
-    let tags: Vec<String> = args.iter().filter_map(|arg| {
-        if arg.starts_with("--tags=") {
-            Some(arg[7..].to_string())
-        } else {
-            None
-        }
-    }).collect();
+    let tags: Vec<String> = args
+        .iter()
+        .filter_map(|arg| {
+            if arg.starts_with("--tags=") {
+                Some(arg[7..].to_string())
+            } else {
+                None
+            }
+        })
+        .collect();
 
     if tags.is_empty() {
         // Run all scenarios if no tags are provided

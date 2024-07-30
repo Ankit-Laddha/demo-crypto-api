@@ -1,8 +1,7 @@
-use std::collections::HashMap;
+use crate::crypto_api::CryptoApi;
 use cucumber::then;
 use serde::Deserialize;
-use crate::crypto_api::CryptoApi;
-
+use std::collections::HashMap;
 
 #[derive(Deserialize, Debug)]
 struct OpenOrdersResponse {
@@ -48,10 +47,14 @@ struct OrderDescription {
 
 #[then("the response should contain valid open orders information")]
 async fn then_response_contains_valid_open_orders(api: &mut CryptoApi) {
-    let response_body = api.response_body.as_ref().expect("Response body was not set");
+    let response_body = api
+        .response_body
+        .as_ref()
+        .expect("Response body was not set");
 
     // Parse the response JSON into your response struct
-    let response: OpenOrdersResponse = serde_json::from_str(response_body).expect("Failed to parse OPEN ORDERS JSON");
+    let response: OpenOrdersResponse =
+        serde_json::from_str(response_body).expect("Failed to parse OPEN ORDERS JSON");
 
     // Assertions to ensure the response is without errors
     assert!(response.error.is_empty(), "Response contains errors");

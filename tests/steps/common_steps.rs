@@ -1,6 +1,6 @@
 use crate::crypto_api::CryptoApi;
 use base64::engine::general_purpose::STANDARD;
-use base64:: Engine;
+use base64::Engine;
 use cucumber::{given, then, when};
 use hmac::digest::Digest;
 use hmac::{Hmac, KeyInit, Mac};
@@ -65,8 +65,7 @@ async fn post_request_with_valid_credentials(api: &mut CryptoApi) {
     // Create HashMap with references to the `String` values
     let body_refs: HashMap<&str, &String> = body.iter().map(|(k, v)| (*k, v)).collect();
 
-    let signature =
-        generate_kraken_signature("/0/private/OpenOrders", &nonce, &body_refs);
+    let signature = generate_kraken_signature("/0/private/OpenOrders", &nonce, &body_refs);
 
     let post_body = format!("nonce={}&trades=false", nonce);
     let (status, body) = send_post_request(&url, &signature, &post_body)
@@ -103,11 +102,7 @@ async fn send_post_request(
     Ok((status, body))
 }
 
-fn generate_kraken_signature(
-    uri_path: &str,
-    nonce: &str,
-    data: &HashMap<&str, &String>,
-) -> String {
+fn generate_kraken_signature(uri_path: &str, nonce: &str, data: &HashMap<&str, &String>) -> String {
     // Create post data in the form "key=value&key=value"
     let mut postdata = String::new();
     for (key, value) in data.iter() {
