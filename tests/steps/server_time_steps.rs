@@ -5,10 +5,10 @@ use serde::Deserialize;
 #[derive(Deserialize, Debug)]
 struct ServerTimeResponse {
     error: Vec<String>,
-    result: ServerTime,
+    result: Option<ServerTime>,
 }
 
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Debug, Clone)]
 struct ServerTime {
     unixtime: u64,
     rfc1123: String,
@@ -24,9 +24,9 @@ async fn check_response_for_valid_server_time(api: &mut CryptoApi) {
         serde_json::from_str(response_body).expect("Failed to parse JSON");
 
     assert!(response.error.is_empty(), "Response contains errors");
-    assert!(response.result.unixtime > 0, "Unix time is not valid");
+    assert!(response.result.clone().unwrap().unixtime > 0, "Unix time is not valid");
     assert!(
-        !response.result.rfc1123.is_empty(),
+        !response.result.unwrap().rfc1123.is_empty(),
         "RFC1123 time is missing"
     );
 }

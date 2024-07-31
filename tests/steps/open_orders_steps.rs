@@ -3,6 +3,8 @@ use cucumber::then;
 use serde::Deserialize;
 use std::collections::HashMap;
 
+// Note: even though I'm not asserting response fields ,
+// I've created the Structs for them just to show in full-fledged project how would I do it.
 #[derive(Deserialize, Debug)]
 struct OpenOrdersResponse {
     error: Vec<String>,
