@@ -84,7 +84,7 @@ async fn send_post_request_with_credentials(api: &mut CryptoApi, api_key: &str, 
     let body_refs: HashMap<&str, &String> = body.iter().map(|(k, v)| (*k, v)).collect();
 
     let signature =
-        generate_kraken_signature("/0/private/OpenOrders", &nonce, &body_refs, &api_secret);
+        generate_signature("/0/private/OpenOrders", &nonce, &body_refs, &api_secret);
 
     let post_body = format!("nonce={}&trades=false", nonce);
     let (status, body) = send_post_request(&url, &signature, &post_body, api_key)
@@ -136,7 +136,7 @@ async fn send_post_request(
     Ok((status, body))
 }
 
-fn generate_kraken_signature(
+fn generate_signature(
     uri_path: &str,
     nonce: &str,
     data: &HashMap<&str, &String>,
