@@ -63,3 +63,7 @@ e.g.
 ```
 
 
+## Reports
+Once the tests are run the results are reported on your console/terminal by default. 
+</br></br>
+![report_screenshot.png](docs/report_screenshot.png)
